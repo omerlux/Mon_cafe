@@ -1,7 +1,10 @@
+import os
 import sys
 import repository
 
 # Initiate the repository
+if os.path.isfile('moncafe.db'):
+    os.remove('moncafe.db')  # Removing the old db
 repository.repo.__init__()
 
 # Creating tables from repository
@@ -24,4 +27,3 @@ while line:
     line = config.readline()
 
 config.close()
-repository.repo._dbcon.close()

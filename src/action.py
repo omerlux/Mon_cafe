@@ -1,9 +1,5 @@
-import os
 import sys
 import repository
-
-# Initiate the repository
-repository.repo.__init__()
 
 # Reading from config.txt
 action = open(sys.argv[1])
@@ -16,8 +12,7 @@ while line:
     date_input = line[3].splitlines()[0]
 
     # check if the quantity+input_quantity is not negative
-    a = repository.repo.products.quantity_check(9003)
-    new_quantity = repository.repo.products.quantity_check(product_id_input) + quantity_input
+    new_quantity = repository.repo.products.quantity_check(product_id_input)[0] + quantity_input
 
     if new_quantity >= 0:
         repository.repo.products.update_quantity(product_id_input, new_quantity)

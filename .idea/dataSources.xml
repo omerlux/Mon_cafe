@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="moncafe" uuid="3369047d-a6a7-403d-a267-793532bb065e">
+    <data-source source="LOCAL" name="moncafe.db" uuid="703236dd-0ffb-4355-aff1-e140ec14873d">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
