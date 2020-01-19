@@ -251,10 +251,23 @@ class _Repository:
 
     def get_extra_activities(self):
         c = self._dbcon.cursor()
-        return c.execute("""SELECT Activities.date, Products.description
-                    FROM (Activities LEFT OUTER JOIN (Products ON Activities.product_id = Products.id)
-                    INNER JOIN Products ON Products.id = Activities.product_id)
+        return c.execute("""SELECT Activities.date, Products.description, Activities.quantity, Employees.name, Suppliers.name
+                            FROM (Activities
+                            INNER JOIN Products ON Activities.product_id=Products.id
+                            LEFT OUTER JOIN Employees ON Activities.activator_id=Employees.id
+                            LEFT OUTER JOIN Suppliers ON Activities.activator_id=Suppliers.id)
+                            ORDER BY Activities.date ASC
                     """)
+
+    def get_employees_report(self):
+        c = self._dbcon.cursor()
+        return c.execute("""SELECT Employees.name, Employees.salary, Coffee_stands.location, SUM(Activities.quantity)
+                            FROM (Employees
+                            INNER JOIN Coffee_stands ON Employees.coffee_stand=Coffee_stands.id
+                            RIGHT OUTER JOIN Activities ON Employees.id=Activities.activator_id)
+                            ORDER BY Employees.name ASC
+                    """)
+
 
 
 # the repository singleton

@@ -17,11 +17,11 @@ while line:
     line = line.split(', ')  # line is an array now
     if line[0] == 'C':
         repository.repo.coffee_stands.insert(repository.Coffee_stand(line[1], line[2], line[3].splitlines()[0]))
-    if line[0] == 'S':
+    elif line[0] == 'S':
         repository.repo.suppliers.insert(repository.Supplier(line[1], line[2], line[3].splitlines()[0]))
-    if line[0] == 'E':
+    elif line[0] == 'E':
         repository.repo.employees.insert(repository.Employee(line[1], line[2], line[3], line[4].splitlines()[0]))
-    if line[0] == 'P':
+    elif line[0] == 'P':
         repository.repo.products.insert(repository.Product(line[1], line[2], line[3].splitlines()[0], 0))
     repository.repo._dbcon.commit()  # commit the changes
     line = config.readline()

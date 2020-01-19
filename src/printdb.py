@@ -18,7 +18,6 @@ if __name__ == '__main__':
     toprint = repository.repo.activities.print()
     print_row_row(toprint)
 
-
     # Print Coffee Stands
     print("Coffee stands")
     toprint = repository.repo.coffee_stands.print()
@@ -42,8 +41,8 @@ if __name__ == '__main__':
 
     # Print Employees Report
     print("Employees report")
-
-
+    cursor = repository.repo.get_employees_report()
+    print_row_row(cursor)
     print()
 
     # Print Activities - complex
