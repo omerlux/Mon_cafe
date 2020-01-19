@@ -261,13 +261,16 @@ class _Repository:
 
     def get_employees_report(self):
         c = self._dbcon.cursor()
-        return c.execute("""SELECT Employees.name, Employees.salary, Coffee_stands.location, SUM(Activities.quantity)
+        return c.execute("""SELECT Employees.name, Employees.salary, Coffee_stands.location, 
+                            COALESCE (SUM( (Activities.quantity * Products.price)*(-1) ), 0)         
                             FROM (Employees
                             INNER JOIN Coffee_stands ON Employees.coffee_stand=Coffee_stands.id
-                            RIGHT OUTER JOIN Activities ON Employees.id=Activities.activator_id)
+                            LEFT OUTER JOIN Activities ON Employees.id=Activities.activator_id
+                            LEFT OUTER JOIN Products ON Activities.product_id=Products.id)
+                            GROUP BY Employees.name
                             ORDER BY Employees.name ASC
                     """)
-
+        # COALESCE will put 0 if the SUM won't be calculated - replacing None in 0
 
 
 # the repository singleton
