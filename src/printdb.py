@@ -7,8 +7,8 @@ def print_a_list(list):
 
 
 # print with corsur.execute
-def print_row_row(corsur):
-    for row in corsur:
+def print_row_row(cursor):
+    for row in cursor:
         print(row)
 
 
