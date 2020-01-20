@@ -15,7 +15,8 @@ class Activity:
         self.activator_id = activator_id
         self.date = date
 
-    # No normal __str___ TODO: make a normal one with a new class
+    def __str__(self):
+        return str(self.product_id) + " " + str(self.quantity) + " " + str(self.activator_id) + " " + str(self.date)
 
 
 # ----- Coffee_stand - DTO -----
@@ -25,8 +26,8 @@ class Coffee_stand:
         self.location = location
         self.number_of_employees = number_of_employees
 
- #   def __str__(self):
-  #      return str(self.id) + " " + self.location + " " + str(self.number_of_employees)
+    def __str__(self):
+        return str(self.id) + " " + self.location + " " + str(self.number_of_employees)
 
 
 # ----- Employee - DTO -----
@@ -37,7 +38,8 @@ class Employee:
         self.salary = salary
         self.coffee_stand = coffee_stand
 
-    # No normal __str___ TODO: make a normal one with a new class
+    def __str__(self):
+        return str(self.id) + " " + self.name + " " + str(self.salary) + " " + str(self.coffee_stand)
 
 
 # ----- Supplier - DTO -----
@@ -47,8 +49,8 @@ class Supplier:
         self.name = name
         self.contact_information = contact_information
 
-   # def __str__(self):
-    #    return str(self.id) + " " + self.name + " " + str(self.contact_information)
+    def __str__(self):
+        return str(self.id) + " " + self.name + " " + str(self.contact_information)
 
 
 # ----- Product - DTO -----
@@ -59,8 +61,8 @@ class Product:
         self.price = price
         self.quantity = quantity
 
-   # def __str__(self):
-    #    return str(self.id) + " " + self.description + " " + str(self.price) + " " + str(self.quantity)
+    def __str__(self):
+        return str(self.id) + " " + self.description + " " + str(self.price) + " " + str(self.quantity)
 
 
 # ------------------------------------DAO-------------------------------
@@ -76,16 +78,9 @@ class _Activities:
                INSERT INTO Activities (product_id, quantity, activator_id,date) VALUES (?,?,?,?)
            """, [activity.product_id, activity.quantity, activity.activator_id, activity.date])
 
-   # def print(self):
-    #    c = self._dbcon.cursor()
-     #   c.execute("""SELECT * FROM Activities ORDER BY Activities.date ASC""")
-      #  print(orm(c, self._dto_type))
-
     def print(self):
         c = self._dbcon.cursor()
-        allact = c.execute("""
-                SELECT * FROM Activities ORDER BY Activities.date ASC
-                """).fetchall()
+        allact = c.execute("""SELECT * FROM Activities ORDER BY Activities.date ASC""").fetchall()
         return [Activity(*row) for row in allact]
 
 
@@ -102,10 +97,9 @@ class _Coffee_stands:
 
     def print(self):
         c = self._dbcon.cursor()
-        # c.execute("""SELECT * FROM Coffee_stands ORDER BY Coffee_stands.id ASC""")
-        # return orm(c, self._dto_type)
         allcs = c.execute("""SELECT * FROM Coffee_stands ORDER BY Coffee_stands.id ASC""").fetchall()
         return [Coffee_stand(*row) for row in allcs]
+
 
 # ----- Employees - DAO -----
 class _Employees:
@@ -123,6 +117,7 @@ class _Employees:
         allemp = c.execute("""SELECT * FROM Employees ORDER BY Employees.id ASC""").fetchall()
         return [Employee(*row) for row in allemp]
 
+
 # ----- Suppliers - DAO -----
 class _Suppliers:
     def __init__(self, dbcon, dto_type):
@@ -136,10 +131,9 @@ class _Suppliers:
 
     def print(self):
         c = self._dbcon.cursor()
-        # c.execute("""SELECT * FROM Suppliers ORDER BY Suppliers.id ASC""")
-        # return orm(c, self._dto_type)
         allsupp = c.execute("""SELECT * FROM Suppliers ORDER BY Suppliers.id ASC""").fetchall()
         return [Supplier(*row) for row in allsupp]
+
 
 # ----- Products - DAO -----
 class _Products:
@@ -154,8 +148,6 @@ class _Products:
 
     def print(self):
         c = self._dbcon.cursor()
-        # c.execute("""SELECT * FROM Products ORDER BY Products.id ASC""")
-        # return orm(c, self._dto_type)
         allprod = c.execute("""SELECT * FROM Products ORDER BY Products.id ASC""").fetchall()
         return [Product(*row) for row in allprod]
 
