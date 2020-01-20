@@ -16,7 +16,7 @@ class Activity:
         self.date = date
 
     def __str__(self):
-        return str(self.product_id) + " " + str(self.quantity) + " " + str(self.activator_id) + " " + str(self.date)
+        return "("+str(self.product_id) + ", " + str(self.quantity) + ", " + str(self.activator_id) + ", " + str(self.date)+")"
 
 
 # ----- Coffee_stand - DTO -----
@@ -27,7 +27,7 @@ class Coffee_stand:
         self.number_of_employees = number_of_employees
 
     def __str__(self):
-        return str(self.id) + " " + self.location + " " + str(self.number_of_employees)
+        return "("+str(self.id) + ", '" + self.location + "', " + str(self.number_of_employees)+")"
 
 
 # ----- Employee - DTO -----
@@ -39,7 +39,7 @@ class Employee:
         self.coffee_stand = coffee_stand
 
     def __str__(self):
-        return str(self.id) + " " + self.name + " " + str(self.salary) + " " + str(self.coffee_stand)
+        return "("+str(self.id) + ", '" + self.name + "', " + str(self.salary) + ", " + str(self.coffee_stand)+")"
 
 
 # ----- Supplier - DTO -----
@@ -50,7 +50,7 @@ class Supplier:
         self.contact_information = contact_information
 
     def __str__(self):
-        return str(self.id) + " " + self.name + " " + str(self.contact_information)
+        return "("+str(self.id) + ", '" + self.name + "', " + str(self.contact_information)+")"
 
 
 # ----- Product - DTO -----
@@ -62,7 +62,7 @@ class Product:
         self.quantity = quantity
 
     def __str__(self):
-        return str(self.id) + " " + self.description + " " + str(self.price) + " " + str(self.quantity)
+        return "("+str(self.id) + ", '" + self.description + "', " + str(self.price) + ", " + str(self.quantity)+")"
 
 
 # ------------------------------------DAO-------------------------------
@@ -163,30 +163,6 @@ class _Products:
         c.execute("""
                 UPDATE Products SET quantity = ? WHERE id = ?
                 """, [new_quantity, product_id])
-
-
-# ----- Printing stuff - ORM -----
-# for printing - creating a map of values for the specified dto
-def orm(cursor, dto_type):
-    # the following line retrieve the argument names of the constructor
-    args = inspect.getfullargspec(dto_type.__init__).args
-
-    # the first argument of the constructor will be 'self', it does not correspond
-    # to any database field, so we can ignore it.
-    args = args[1:]
-
-    # gets the names of the columns returned in the cursor
-    col_names = [column[0] for column in cursor.description]
-
-    # map them into the position of the corresponding constructor argument
-    col_mapping = [col_names.index(arg) for arg in args]
-    return [row_map(row, col_mapping, dto_type) for row in cursor.fetchall()]
-
-
-def row_map(row, col_mapping, dto_type):
-    ctor_args = [row[idx] for idx in col_mapping]
-    return dto_type(*ctor_args)
-
 
 # ------------------------------------Repository-------------------------------
 # The Repository
