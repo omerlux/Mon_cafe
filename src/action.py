@@ -18,7 +18,7 @@ while line:
         repository.repo.products.update_quantity(product_id_input, new_quantity)
         repository.repo.activities.insert(repository.Activity(product_id_input, quantity_input, empsup_input, date_input))
 
-    repository.repo._dbcon.commit()  # commit the changes
+    #repository.repo._dbcon.commit()  # commit the changes
     line = action.readline()
 
 action.close()

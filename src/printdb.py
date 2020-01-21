@@ -13,39 +13,31 @@ def print_row_row(cursor):
 
 
 if __name__ == '__main__':
+
     # Print Activities
     print("Activities")
-    toprint = repository.repo.activities.print()
-    print_row_row(toprint)
+    repository.repo.activities.print()
 
     # Print Coffee Stands
     print("Coffee stands")
-    toprint = repository.repo.coffee_stands.print()
-    print_row_row(toprint)
+    repository.repo.coffee_stands.print()
 
     # Print Employees - normal
     print("Employees")
-    toprint = repository.repo.employees.print()
-    print_row_row(toprint)
+    repository.repo.employees.print()
 
     # Print Products
     print("Products")
-    toprint = repository.repo.products.print()
-    print_a_list(toprint)
+    repository.repo.products.print()
 
     # Print Suppliers
     print("Suppliers")
-    toprint = repository.repo.suppliers.print()
-    print_row_row(toprint)
+    repository.repo.suppliers.print()
     print()
 
     # Print Employees Report
     print("Employees report")
     repository.repo.get_employees_report()
-    #print_row_row(cursor)
-    print()
 
     # Print Activities - complex
-    print("Activities")
     repository.repo.get_extra_activities()
-   # print_row_row(cursor)

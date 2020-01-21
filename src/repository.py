@@ -65,6 +65,18 @@ class Product:
         return "("+str(self.id) + ", '" + self.description + "', " + str(self.price) + ", " + str(self.quantity)+")"
 
 
+# ----- Employee Report - DTO -----
+class Employee_Report:
+    def __init__(self, name, salary, location, total):
+        self.name = name
+        self.salary = salary
+        self.location = location
+        self.total = total
+
+    def __str__(self):
+        return str(self.name) + " " + str(self.salary) + " " + str(self.location) + " " + str(self.total)
+
+
 # ------------------------------------DAO-------------------------------
 # Data Access Objects
 # ----- Activities - DAO -----
@@ -81,7 +93,8 @@ class _Activities:
     def print(self):
         c = self._dbcon.cursor()
         allact = c.execute("""SELECT * FROM Activities ORDER BY Activities.date ASC""").fetchall()
-        return [Activity(*row) for row in allact]
+        for row in allact:
+            print(row)
 
 
 # ----- Coffee_stands - DAO -----
@@ -98,7 +111,8 @@ class _Coffee_stands:
     def print(self):
         c = self._dbcon.cursor()
         allcs = c.execute("""SELECT * FROM Coffee_stands ORDER BY Coffee_stands.id ASC""").fetchall()
-        return [Coffee_stand(*row) for row in allcs]
+        for row in allcs:
+            print(row)
 
 
 # ----- Employees - DAO -----
@@ -115,7 +129,8 @@ class _Employees:
     def print(self):
         c = self._dbcon.cursor()
         allemp = c.execute("""SELECT * FROM Employees ORDER BY Employees.id ASC""").fetchall()
-        return [Employee(*row) for row in allemp]
+        for row in allemp:
+            print(row)
 
 
 # ----- Suppliers - DAO -----
@@ -132,7 +147,8 @@ class _Suppliers:
     def print(self):
         c = self._dbcon.cursor()
         allsupp = c.execute("""SELECT * FROM Suppliers ORDER BY Suppliers.id ASC""").fetchall()
-        return [Supplier(*row) for row in allsupp]
+        for row in allsupp:
+            print(row)
 
 
 # ----- Products - DAO -----
@@ -149,7 +165,8 @@ class _Products:
     def print(self):
         c = self._dbcon.cursor()
         allprod = c.execute("""SELECT * FROM Products ORDER BY Products.id ASC""").fetchall()
-        return [Product(*row) for row in allprod]
+        for row in allprod:
+            print(row)
 
     def quantity_check(self, product_id):
         c = self._dbcon.cursor()
@@ -180,7 +197,7 @@ class _Repository:
 
     def _close(self):
         self._dbcon.commit()
-        # self._dbcon.close()
+        self._dbcon.close()
 
     def _connect(self):
         self._dbcon = sqlite3.connect('moncafe.db')
@@ -221,15 +238,19 @@ class _Repository:
 
     def get_extra_activities(self):
         c = self._dbcon.cursor()
-        c.execute("""SELECT Activities.date, Products.description, Activities.quantity, Employees.name, Suppliers.name
+        allact = c.execute("""SELECT Activities.date, Products.description, Activities.quantity, Employees.name, Suppliers.name
                             FROM (Activities
                             INNER JOIN Products ON Activities.product_id=Products.id
                             LEFT OUTER JOIN Employees ON Activities.activator_id=Employees.id
                             LEFT OUTER JOIN Suppliers ON Activities.activator_id=Suppliers.id)
                             ORDER BY Activities.date ASC
-                    """)
-        for row in c:
-            print(row)
+                    """).fetchall()
+        #print(allact.fetchone()[0])
+        if len(allact) != 0:
+            print()
+            print("Activities")
+            for row in allact:
+                print(row)
 
     def get_employees_report(self):
         c = self._dbcon.cursor()
@@ -243,7 +264,7 @@ class _Repository:
                             ORDER BY Employees.name ASC
                     """)
         for row in c:
-            print(row)
+            print(Employee_Report(*row))
         # COALESCE will put 0 if the SUM won't be calculated - replacing None in 0
 
 
