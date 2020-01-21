@@ -15,7 +15,8 @@ class Activity:
         self.activator_id = activator_id
         self.date = date
 
-    # No normal __str___ TODO: make a normal one with a new class
+    def __str__(self):
+        return "("+str(self.product_id) + ", " + str(self.quantity) + ", " + str(self.activator_id) + ", " + str(self.date)+")"
 
 
 # ----- Coffee_stand - DTO -----
@@ -26,7 +27,7 @@ class Coffee_stand:
         self.number_of_employees = number_of_employees
 
     def __str__(self):
-        return str(self.id) + " " + self.location + " " + str(self.number_of_employees)
+        return "("+str(self.id) + ", '" + self.location + "', " + str(self.number_of_employees)+")"
 
 
 # ----- Employee - DTO -----
@@ -37,7 +38,8 @@ class Employee:
         self.salary = salary
         self.coffee_stand = coffee_stand
 
-    # No normal __str___ TODO: make a normal one with a new class
+    def __str__(self):
+        return "("+str(self.id) + ", '" + self.name + "', " + str(self.salary) + ", " + str(self.coffee_stand)+")"
 
 
 # ----- Supplier - DTO -----
@@ -48,7 +50,7 @@ class Supplier:
         self.contact_information = contact_information
 
     def __str__(self):
-        return str(self.id) + " " + self.name + " " + str(self.contact_information)
+        return "("+str(self.id) + ", '" + self.name + "', " + str(self.contact_information)+")"
 
 
 # ----- Product - DTO -----
@@ -60,7 +62,7 @@ class Product:
         self.quantity = quantity
 
     def __str__(self):
-        return str(self.id) + " " + self.description + " " + str(self.price) + " " + str(self.quantity)
+        return "("+str(self.id) + ", '" + self.description + "', " + str(self.price) + ", " + str(self.quantity)+")"
 
 
 # ------------------------------------DAO-------------------------------
@@ -78,12 +80,8 @@ class _Activities:
 
     def print(self):
         c = self._dbcon.cursor()
-        c.execute("""SELECT * FROM Activities ORDER BY Activities.date ASC""")
-        print(orm(c, self._dto_type))
-
-    def print(self):
-        c = self._dbcon.cursor()
-        return c.execute("""SELECT * FROM Activities ORDER BY Activities.date ASC""")
+        allact = c.execute("""SELECT * FROM Activities ORDER BY Activities.date ASC""").fetchall()
+        return [Activity(*row) for row in allact]
 
 
 # ----- Coffee_stands - DAO -----
@@ -99,9 +97,8 @@ class _Coffee_stands:
 
     def print(self):
         c = self._dbcon.cursor()
-        #c.execute("""SELECT * FROM Coffee_stands ORDER BY Coffee_stands.id ASC""")
-        #return orm(c, self._dto_type)
-        return c.execute("""SELECT * FROM Coffee_stands ORDER BY Coffee_stands.id ASC""")
+        allcs = c.execute("""SELECT * FROM Coffee_stands ORDER BY Coffee_stands.id ASC""").fetchall()
+        return [Coffee_stand(*row) for row in allcs]
 
 
 # ----- Employees - DAO -----
@@ -117,7 +114,8 @@ class _Employees:
 
     def print(self):
         c = self._dbcon.cursor()
-        return c.execute("""SELECT * FROM Employees ORDER BY Employees.id ASC""")
+        allemp = c.execute("""SELECT * FROM Employees ORDER BY Employees.id ASC""").fetchall()
+        return [Employee(*row) for row in allemp]
 
 
 # ----- Suppliers - DAO -----
@@ -133,9 +131,8 @@ class _Suppliers:
 
     def print(self):
         c = self._dbcon.cursor()
-        #c.execute("""SELECT * FROM Suppliers ORDER BY Suppliers.id ASC""")
-        #return orm(c, self._dto_type)
-        return c.execute("""SELECT * FROM Suppliers ORDER BY Suppliers.id ASC""")
+        allsupp = c.execute("""SELECT * FROM Suppliers ORDER BY Suppliers.id ASC""").fetchall()
+        return [Supplier(*row) for row in allsupp]
 
 
 # ----- Products - DAO -----
@@ -151,9 +148,8 @@ class _Products:
 
     def print(self):
         c = self._dbcon.cursor()
-        #c.execute("""SELECT * FROM Products ORDER BY Products.id ASC""")
-        #return orm(c, self._dto_type)
-        return c.execute("""SELECT * FROM Products ORDER BY Products.id ASC""")
+        allprod = c.execute("""SELECT * FROM Products ORDER BY Products.id ASC""").fetchall()
+        return [Product(*row) for row in allprod]
 
     def quantity_check(self, product_id):
         c = self._dbcon.cursor()
@@ -167,30 +163,6 @@ class _Products:
         c.execute("""
                 UPDATE Products SET quantity = ? WHERE id = ?
                 """, [new_quantity, product_id])
-
-
-# ----- Printing stuff - ORM -----
-# for printing - creating a map of values for the specified dto
-def orm(cursor, dto_type):
-    # the following line retrieve the argument names of the constructor
-    args = inspect.getfullargspec(dto_type.__init__).args
-
-    # the first argument of the constructor will be 'self', it does not correspond
-    # to any database field, so we can ignore it.
-    args = args[1:]
-
-    # gets the names of the columns returned in the cursor
-    col_names = [column[0] for column in cursor.description]
-
-    # map them into the position of the corresponding constructor argument
-    col_mapping = [col_names.index(arg) for arg in args]
-    return [row_map(row, col_mapping, dto_type) for row in cursor.fetchall()]
-
-
-def row_map(row, col_mapping, dto_type):
-    ctor_args = [row[idx] for idx in col_mapping]
-    return dto_type(*ctor_args)
-
 
 # ------------------------------------Repository-------------------------------
 # The Repository
@@ -208,7 +180,7 @@ class _Repository:
 
     def _close(self):
         self._dbcon.commit()
-        #self._dbcon.close()
+        # self._dbcon.close()
 
     def _connect(self):
         self._dbcon = sqlite3.connect('moncafe.db')
@@ -221,26 +193,24 @@ class _Repository:
                            salary REAL NOT NULL, 
                            coffee_stand INTEGER REFERENCES Coffee_stands(id)
         );
-
         CREATE TABLE Suppliers(
                            id INTEGER PRIMARY KEY,
                            name TEXT NOT NULL,
                            contact_information TEXT
         );
-
         CREATE TABLE Products(
                            id INTEGER PRIMARY KEY,
                            description TEXT NOT NULL,
                            price REAL NOT NULL,
                            quantity INTEGER NOT NULL
         );
-        
+
         CREATE TABLE Coffee_stands(
                            id INTEGER PRIMARY KEY,
                            location TEXT NOT NULL,
                            number_of_employees INTEGER
         );
-        
+
         CREATE TABLE Activities(
                            product_id INTEGER INTEGER REFERENCES Product(id),
                            quantity INTEGER NOT NULL,
@@ -251,17 +221,19 @@ class _Repository:
 
     def get_extra_activities(self):
         c = self._dbcon.cursor()
-        return c.execute("""SELECT Activities.date, Products.description, Activities.quantity, Employees.name, Suppliers.name
+        c.execute("""SELECT Activities.date, Products.description, Activities.quantity, Employees.name, Suppliers.name
                             FROM (Activities
                             INNER JOIN Products ON Activities.product_id=Products.id
                             LEFT OUTER JOIN Employees ON Activities.activator_id=Employees.id
                             LEFT OUTER JOIN Suppliers ON Activities.activator_id=Suppliers.id)
                             ORDER BY Activities.date ASC
                     """)
+        for row in c:
+            print(row)
 
     def get_employees_report(self):
         c = self._dbcon.cursor()
-        return c.execute("""SELECT Employees.name, Employees.salary, Coffee_stands.location, 
+        c.execute("""SELECT Employees.name, Employees.salary, Coffee_stands.location, 
                             COALESCE (SUM( (Activities.quantity * Products.price)*(-1) ), 0)         
                             FROM (Employees
                             INNER JOIN Coffee_stands ON Employees.coffee_stand=Coffee_stands.id
@@ -270,6 +242,8 @@ class _Repository:
                             GROUP BY Employees.name
                             ORDER BY Employees.name ASC
                     """)
+        for row in c:
+            print(row)
         # COALESCE will put 0 if the SUM won't be calculated - replacing None in 0
 
 

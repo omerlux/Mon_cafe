@@ -7,8 +7,8 @@ def print_a_list(list):
 
 
 # print with corsur.execute
-def print_row_row(corsur):
-    for row in corsur:
+def print_row_row(cursor):
+    for row in cursor:
         print(row)
 
 
@@ -41,11 +41,11 @@ if __name__ == '__main__':
 
     # Print Employees Report
     print("Employees report")
-    cursor = repository.repo.get_employees_report()
-    print_row_row(cursor)
+    repository.repo.get_employees_report()
+    #print_row_row(cursor)
     print()
 
     # Print Activities - complex
     print("Activities")
-    cursor = repository.repo.get_extra_activities()
-    print_row_row(cursor)
+    repository.repo.get_extra_activities()
+   # print_row_row(cursor)
