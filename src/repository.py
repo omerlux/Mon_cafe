@@ -264,7 +264,7 @@ class _Repository:
                             INNER JOIN Coffee_stands ON Employees.coffee_stand=Coffee_stands.id
                             LEFT OUTER JOIN Activities ON Employees.id=Activities.activator_id
                             LEFT OUTER JOIN Products ON Activities.product_id=Products.id)
-                            GROUP BY Employees.name
+                            GROUP BY Employees.id
                             ORDER BY Employees.name ASC
                     """)
         return [Employee_Report(*row) for row in all]
