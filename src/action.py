@@ -1,5 +1,6 @@
 import sys
 import repository
+import printdb
 
 # Reading from config.txt
 action = open(sys.argv[1])
@@ -22,3 +23,4 @@ while line:
     line = action.readline()
 
 action.close()
+printdb.printit()

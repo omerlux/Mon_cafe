@@ -77,6 +77,20 @@ class Employee_Report:
         return str(self.name) + " " + str(self.salary) + " " + str(self.location) + " " + str(self.total)
 
 
+# ----- Activities Report - DTO -----
+class Activity_Report:
+    def __init__(self, date, description, quantity, name_emp, name_sup):
+        self.date = date
+        self.description = description
+        self.quantity = quantity
+        self.name_emp = name_emp
+        self.name_sup = name_sup
+
+    def __str__(self):
+        return "("+str(self.date) + ", '" + self.description + "', " + str(self.quantity) + ", " + str(self.name_emp)\
+               + ", " + str(self.name_sup)+") "
+
+
 # ------------------------------------DAO-------------------------------
 # Data Access Objects
 # ----- Activities - DAO -----
@@ -92,9 +106,8 @@ class _Activities:
 
     def print(self):
         c = self._dbcon.cursor()
-        allact = c.execute("""SELECT * FROM Activities ORDER BY Activities.date ASC""").fetchall()
-        for row in allact:
-            print(row)
+        all = c.execute("""SELECT * FROM Activities ORDER BY Activities.date ASC""").fetchall()
+        return [Activity(*row) for row in all]
 
 
 # ----- Coffee_stands - DAO -----
@@ -110,9 +123,8 @@ class _Coffee_stands:
 
     def print(self):
         c = self._dbcon.cursor()
-        allcs = c.execute("""SELECT * FROM Coffee_stands ORDER BY Coffee_stands.id ASC""").fetchall()
-        for row in allcs:
-            print(row)
+        all = c.execute("""SELECT * FROM Coffee_stands ORDER BY Coffee_stands.id ASC""").fetchall()
+        return [Coffee_stand(*row) for row in all]
 
 
 # ----- Employees - DAO -----
@@ -128,9 +140,8 @@ class _Employees:
 
     def print(self):
         c = self._dbcon.cursor()
-        allemp = c.execute("""SELECT * FROM Employees ORDER BY Employees.id ASC""").fetchall()
-        for row in allemp:
-            print(row)
+        all = c.execute("""SELECT * FROM Employees ORDER BY Employees.id ASC""").fetchall()
+        return [Employee(*row) for row in all]
 
 
 # ----- Suppliers - DAO -----
@@ -146,9 +157,8 @@ class _Suppliers:
 
     def print(self):
         c = self._dbcon.cursor()
-        allsupp = c.execute("""SELECT * FROM Suppliers ORDER BY Suppliers.id ASC""").fetchall()
-        for row in allsupp:
-            print(row)
+        all = c.execute("""SELECT * FROM Suppliers ORDER BY Suppliers.id ASC""").fetchall()
+        return [Supplier(*row) for row in all]
 
 
 # ----- Products - DAO -----
@@ -164,9 +174,8 @@ class _Products:
 
     def print(self):
         c = self._dbcon.cursor()
-        allprod = c.execute("""SELECT * FROM Products ORDER BY Products.id ASC""").fetchall()
-        for row in allprod:
-            print(row)
+        all = c.execute("""SELECT * FROM Products ORDER BY Products.id ASC""").fetchall()
+        return [Product(*row) for row in all]
 
     def quantity_check(self, product_id):
         c = self._dbcon.cursor()
@@ -238,23 +247,18 @@ class _Repository:
 
     def get_extra_activities(self):
         c = self._dbcon.cursor()
-        allact = c.execute("""SELECT Activities.date, Products.description, Activities.quantity, Employees.name, Suppliers.name
+        all = c.execute("""SELECT Activities.date, Products.description, Activities.quantity, Employees.name, Suppliers.name
                             FROM (Activities
                             INNER JOIN Products ON Activities.product_id=Products.id
                             LEFT OUTER JOIN Employees ON Activities.activator_id=Employees.id
                             LEFT OUTER JOIN Suppliers ON Activities.activator_id=Suppliers.id)
                             ORDER BY Activities.date ASC
                     """).fetchall()
-        #print(allact.fetchone()[0])
-        if len(allact) != 0:
-            print()
-            print("Activities")
-            for row in allact:
-                print(row)
+        return [Activity_Report(*row) for row in all]
 
     def get_employees_report(self):
         c = self._dbcon.cursor()
-        c.execute("""SELECT Employees.name, Employees.salary, Coffee_stands.location, 
+        all = c.execute("""SELECT Employees.name, Employees.salary, Coffee_stands.location, 
                             COALESCE (SUM( (Activities.quantity * Products.price)*(-1) ), 0)         
                             FROM (Employees
                             INNER JOIN Coffee_stands ON Employees.coffee_stand=Coffee_stands.id
@@ -263,8 +267,7 @@ class _Repository:
                             GROUP BY Employees.name
                             ORDER BY Employees.name ASC
                     """)
-        for row in c:
-            print(Employee_Report(*row))
+        return [Employee_Report(*row) for row in all]
         # COALESCE will put 0 if the SUM won't be calculated - replacing None in 0
 
 

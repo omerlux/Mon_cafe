@@ -1,43 +1,58 @@
 import repository
 
-# print with ORM
-def print_a_list(list):
-    for item in list:
-        print(item)
 
-
-# print with corsur.execute
-def print_row_row(cursor):
-    for row in cursor:
-        print(row)
-
-
-if __name__ == '__main__':
-
+def printit():
     # Print Activities
     print("Activities")
-    repository.repo.activities.print()
+    act = repository.repo.activities.print()
+    for item in act:
+        tup = (item.product_id, item.quantity, item.activator_id, str(item.date))
+        print(tup)
 
     # Print Coffee Stands
     print("Coffee stands")
-    repository.repo.coffee_stands.print()
+    cs = repository.repo.coffee_stands.print()
+    for item in cs:
+        tup = (item.id, item.location, item.number_of_employees)
+        print(tup)
 
     # Print Employees - normal
     print("Employees")
-    repository.repo.employees.print()
+    emp = repository.repo.employees.print()
+    for item in emp:
+        tup = (item.id, item.name, item.salary, item.coffee_stand)
+        print(tup)
 
     # Print Products
     print("Products")
-    repository.repo.products.print()
+    prod = repository.repo.products.print()
+    for item in prod:
+        tup = (item.id, item.description, item.price, item.quantity)
+        print(tup)
 
     # Print Suppliers
     print("Suppliers")
-    repository.repo.suppliers.print()
+    sup = repository.repo.suppliers.print()
+    for item in sup:
+        tup = (item.id, item.name, item.contact_information)
+        print(tup)
     print()
 
     # Print Employees Report
     print("Employees report")
-    repository.repo.get_employees_report()
+    emp_rep = repository.repo.get_employees_report()
+    for item in emp_rep:
+        print(item)  # special print
 
     # Print Activities - complex
-    repository.repo.get_extra_activities()
+    act_rep = repository.repo.get_extra_activities()
+    if len(act_rep) != 0:
+        print()
+        print("Activities")
+        for item in act_rep:
+            tup = (item.date, item.description, item.quantity, item.name_emp, item.name_sup)
+            print(tup)
+
+
+if __name__ == '__main__':
+    printit()
