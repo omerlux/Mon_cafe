@@ -6,7 +6,7 @@ def printit():
     print("Activities")
     act = repository.repo.activities.print()
     for item in act:
-        tup = (item.product_id, item.quantity, item.activator_id, str(item.date))
+        tup = (item.product_id, item.quantity, item.activator_id, item.date)
         print(tup)
 
     # Print Coffee Stands
